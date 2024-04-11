@@ -66,7 +66,7 @@ class ClassLoadInfo : public StackObj {
     _class_hidden_info._class_data = Handle();
     _is_hidden = false;
     _is_strong_hidden = false;
-    _can_access_vm_annotations = false;
+    _can_access_vm_annotations = true;
   }
 
   ClassLoadInfo(Handle protection_domain, InstanceKlass* dynamic_nest_host,
