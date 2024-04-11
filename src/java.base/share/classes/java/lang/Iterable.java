@@ -70,10 +70,7 @@ public interface Iterable<T> {
      * @since 1.8
      */
     default void forEach(Consumer<? super T> action) {
-        Objects.requireNonNull(action);
-        for (T t : this) {
-            action.accept(t);
-        }
+		this.spliterator().forEachRemaining(action);
     }
 
     /**
