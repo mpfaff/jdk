@@ -27,7 +27,6 @@ package java.lang;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.util.FormatProcessor;
 import java.util.function.Function;
 import java.util.List;
 import java.util.Objects;
@@ -593,13 +592,11 @@ public interface StringTemplate {
          * These specializations are typically implemented to improve performance;
          * specializing value types or avoiding boxing and vararg arrays.
          *
-         * @implNote This interface is sealed to only allow standard processors.
-         *
          * @sealedGraph
          * @since 21
          */
         @PreviewFeature(feature=PreviewFeature.Feature.STRING_TEMPLATES)
-        public sealed interface Linkage permits FormatProcessor {
+        public interface Linkage {
             /**
              * This method creates a {@link MethodHandle} that when invoked with arguments of
              * those specified in {@code type} returns a result that equals that returned by
