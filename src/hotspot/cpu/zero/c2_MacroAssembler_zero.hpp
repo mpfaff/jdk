@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2022, Huawei Technologies Co., Ltd. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,9 +23,9 @@
  *
  */
 
-#ifndef SHARE_UTILITIES_COMPILERWARNINGS_XLC_HPP
-#define SHARE_UTILITIES_COMPILERWARNINGS_XLC_HPP
+#ifndef CPU_ZERO_C2_MACROASSEMBLER_ZERO_HPP
+#define CPU_ZERO_C2_MACROASSEMBLER_ZERO_HPP
 
-// Nothing here yet.
+// C2_MacroAssembler contains high-level macros for C2
 
-#endif // SHARE_UTILITIES_COMPILERWARNINGS_XLC_HPP
+#endif // CPU_ZERO_C2_MACROASSEMBLER_ZERO_HPP
