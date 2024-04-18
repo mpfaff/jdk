@@ -119,15 +119,6 @@ public class TransformImpl {
                     builder.with(ce);
             });
         }
-
-        @Override
-        public ClassTransform andThen(ClassTransform next) {
-            if (next instanceof ClassMethodTransform cmt)
-                return new ClassMethodTransform(transform.andThen(cmt.transform),
-                                                mm -> filter.test(mm) && cmt.filter.test(mm));
-            else
-                return UnresolvedClassTransform.super.andThen(next);
-        }
     }
 
     public record ClassFieldTransform(FieldTransform transform,
@@ -141,15 +132,6 @@ public class TransformImpl {
                 else
                     builder.with(ce);
             });
-        }
-
-        @Override
-        public ClassTransform andThen(ClassTransform next) {
-            if (next instanceof ClassFieldTransform cft)
-                return new ClassFieldTransform(transform.andThen(cft.transform),
-                                               mm -> filter.test(mm) && cft.filter.test(mm));
-            else
-                return UnresolvedClassTransform.super.andThen(next);
         }
     }
 
@@ -206,14 +188,6 @@ public class TransformImpl {
                     builder.with(me);
                 }
             }, NOTHING, NOTHING);
-        }
-
-        @Override
-        public MethodTransform andThen(MethodTransform next) {
-            return (next instanceof TransformImpl.MethodCodeTransform mct)
-                   ? new TransformImpl.MethodCodeTransform(xform.andThen(mct.xform))
-                   : UnresolvedMethodTransform.super.andThen(next);
-
         }
     }
 
