@@ -36,13 +36,11 @@ import java.lang.classfile.MethodModel;
 import java.lang.classfile.constantpool.ConstantPoolBuilder;
 
 public final class ChainedMethodBuilder implements MethodBuilder {
-    final MethodBuilder downstream;
     final TerminalMethodBuilder terminal;
     final Consumer<MethodElement> consumer;
 
     public ChainedMethodBuilder(MethodBuilder downstream,
                                 Consumer<MethodElement> consumer) {
-        this.downstream = downstream;
         this.consumer = consumer;
         this.terminal = switch (downstream) {
             case ChainedMethodBuilder cb -> cb.terminal;
@@ -58,7 +56,7 @@ public final class ChainedMethodBuilder implements MethodBuilder {
 
     @Override
     public MethodBuilder withCode(Consumer<? super CodeBuilder> handler) {
-        return downstream.with(terminal.bufferedCodeBuilder(null)
+        return consumer.accept(terminal.bufferedCodeBuilder(null)
                                        .run(handler)
                                        .toModel());
     }
@@ -67,7 +65,7 @@ public final class ChainedMethodBuilder implements MethodBuilder {
     public MethodBuilder transformCode(CodeModel code, CodeTransform transform) {
         BufferedCodeBuilder builder = terminal.bufferedCodeBuilder(code);
         builder.transform(code, transform);
-        return downstream.with(builder.toModel());
+        return consumer.accept(builder.toModel());
     }
 
     @Override

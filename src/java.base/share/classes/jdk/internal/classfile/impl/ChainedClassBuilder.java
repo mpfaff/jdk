@@ -33,13 +33,11 @@ import java.lang.classfile.constantpool.Utf8Entry;
 
 public final class ChainedClassBuilder
         implements ClassBuilder, Consumer<ClassElement> {
-    private final ClassBuilder downstream;
     private final DirectClassBuilder terminal;
     private final Consumer<ClassElement> consumer;
 
     public ChainedClassBuilder(ClassBuilder downstream,
                                Consumer<ClassElement> consumer) {
-        this.downstream = downstream;
         this.consumer = consumer;
         this.terminal = switch (downstream) {
             case ChainedClassBuilder cb -> cb.terminal;
@@ -60,7 +58,7 @@ public final class ChainedClassBuilder
 
     @Override
     public ClassBuilder withField(Utf8Entry name, Utf8Entry descriptor, Consumer<? super FieldBuilder> handler) {
-        return downstream.with(new BufferedFieldBuilder(terminal.constantPool, terminal.context,
+        return consumer.accept(new BufferedFieldBuilder(terminal.constantPool, terminal.context,
                                                         name, descriptor, null)
                                        .run(handler)
                                        .toModel());
@@ -72,13 +70,13 @@ public final class ChainedClassBuilder
                                                                 field.fieldName(), field.fieldType(),
                                                                 field);
         builder.transform(field, transform);
-        return downstream.with(builder.toModel());
+        return consumer.accept(builder.toModel());
     }
 
     @Override
     public ClassBuilder withMethod(Utf8Entry name, Utf8Entry descriptor, int flags,
                                    Consumer<? super MethodBuilder> handler) {
-        return downstream.with(new BufferedMethodBuilder(terminal.constantPool, terminal.context,
+        return consumer.accept(new BufferedMethodBuilder(terminal.constantPool, terminal.context,
                                                          name, descriptor, null)
                                        .run(handler)
                                        .toModel());
@@ -89,7 +87,7 @@ public final class ChainedClassBuilder
         BufferedMethodBuilder builder = new BufferedMethodBuilder(terminal.constantPool, terminal.context,
                                                                   method.methodName(), method.methodType(), method);
         builder.transform(method, transform);
-        return downstream.with(builder.toModel());
+        return consumer.accept(builder.toModel());
     }
 
     @Override
