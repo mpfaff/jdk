@@ -58,7 +58,7 @@ public final class ChainedClassBuilder
 
     @Override
     public ClassBuilder withField(Utf8Entry name, Utf8Entry descriptor, Consumer<? super FieldBuilder> handler) {
-        return consumer.accept(new BufferedFieldBuilder(terminal.constantPool, terminal.context,
+        return with(new BufferedFieldBuilder(terminal.constantPool, terminal.context,
                                                         name, descriptor, null)
                                        .run(handler)
                                        .toModel());
@@ -70,13 +70,13 @@ public final class ChainedClassBuilder
                                                                 field.fieldName(), field.fieldType(),
                                                                 field);
         builder.transform(field, transform);
-        return consumer.accept(builder.toModel());
+        return with(builder.toModel());
     }
 
     @Override
     public ClassBuilder withMethod(Utf8Entry name, Utf8Entry descriptor, int flags,
                                    Consumer<? super MethodBuilder> handler) {
-        return consumer.accept(new BufferedMethodBuilder(terminal.constantPool, terminal.context,
+        return with(new BufferedMethodBuilder(terminal.constantPool, terminal.context,
                                                          name, descriptor, null)
                                        .run(handler)
                                        .toModel());
@@ -87,7 +87,7 @@ public final class ChainedClassBuilder
         BufferedMethodBuilder builder = new BufferedMethodBuilder(terminal.constantPool, terminal.context,
                                                                   method.methodName(), method.methodType(), method);
         builder.transform(method, transform);
-        return consumer.accept(builder.toModel());
+        return with(builder.toModel());
     }
 
     @Override

@@ -56,7 +56,7 @@ public final class ChainedMethodBuilder implements MethodBuilder {
 
     @Override
     public MethodBuilder withCode(Consumer<? super CodeBuilder> handler) {
-        return consumer.accept(terminal.bufferedCodeBuilder(null)
+        return with(terminal.bufferedCodeBuilder(null)
                                        .run(handler)
                                        .toModel());
     }
@@ -65,7 +65,7 @@ public final class ChainedMethodBuilder implements MethodBuilder {
     public MethodBuilder transformCode(CodeModel code, CodeTransform transform) {
         BufferedCodeBuilder builder = terminal.bufferedCodeBuilder(code);
         builder.transform(code, transform);
-        return consumer.accept(builder.toModel());
+        return with(builder.toModel());
     }
 
     @Override
