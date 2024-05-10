@@ -89,7 +89,8 @@ public class CompletenessTest extends KullaTesting {
         "record.any",
         "record()",
         "record(1)",
-        "record.length()"
+        "record.length()",
+        "\"\\{0}\""
     };
 
     static final String[] complete_with_semi = new String[] {
@@ -234,7 +235,10 @@ public class CompletenessTest extends KullaTesting {
     static final String[] unknown = new String[] {
         "new ;",
         "\"",
-        "\"\\"
+        "\"\\",
+        "\"\\{",
+        "\"\\{0",
+        "\"\\{0}",
     };
 
     static final Map<Completeness, String[]> statusToCases = new HashMap<>();
@@ -380,6 +384,9 @@ public class CompletenessTest extends KullaTesting {
         assertStatus("\"\"\"\ntext\\\"\"\"\\\"\"\"", DEFINITELY_INCOMPLETE, null);
         assertStatus("\"\"\"\ntext\\\"\"\"\\\"\"\"\"\"\"", COMPLETE, "\"\"\"\ntext\\\"\"\"\\\"\"\"\"\"\"");
         assertStatus("\"\"\"\n\\", DEFINITELY_INCOMPLETE, null);
+        assertStatus("\"\"\"\n\\{", DEFINITELY_INCOMPLETE, null);
+        assertStatus("\"\"\"\n\\{0", DEFINITELY_INCOMPLETE, null);
+        assertStatus("\"\"\"\n\\{0}", DEFINITELY_INCOMPLETE, null);
     }
 
     public void testMiscSource() {
