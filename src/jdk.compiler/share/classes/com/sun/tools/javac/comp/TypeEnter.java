@@ -353,9 +353,7 @@ public class TypeEnter implements Completer {
                     Parser parser = parserFactory.newParser(autoImports, false, false, false, false);
                     JCCompilationUnit importTree = parser.parseCompilationUnit();
 
-                    for (JCImport imp : importTree.getImports()) {
-                        doImport(imp);
-                    }
+                    handleImports(importTree.getImports());
                 } finally {
                     chk.setLint(prevLint);
                     chk.disablePreviewCheck = prevPreviewCheck;
