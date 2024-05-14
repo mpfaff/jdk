@@ -1209,7 +1209,7 @@ public final class StringConcatFactory {
         }
     }
 
-    /*
+    /**
      * Simplified concatenation method to facilitate {@link StringTemplate}
      * concatenation. This method returns a single concatenation method that
      * interleaves fragments and values. fragment|value|fragment|value|...|value|fragment.
