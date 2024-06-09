@@ -304,7 +304,7 @@ jobs:
       platform: linux-x64
       bootjdk-platform: linux-x64
       runs-on: ubuntu-22.04
-    if: github.event.inputs.run_tests
+    if: github.event.inputs.run_tests == 'true'
 
   test-linux-x86:
     name: linux-x86
@@ -315,7 +315,7 @@ jobs:
       platform: linux-x86
       bootjdk-platform: linux-x64
       runs-on: ubuntu-22.04
-    if: github.event.inputs.run_tests
+    if: github.event.inputs.run_tests == 'true'
 
   test-macos-x64:
     name: macos-x64
@@ -326,7 +326,7 @@ jobs:
       platform: macos-x64
       bootjdk-platform: macos-x64
       runs-on: macos-13
-    if: github.event.inputs.run_tests
+    if: github.event.inputs.run_tests == 'true'
 
   test-macos-aarch64:
     name: macos-aarch64
@@ -337,7 +337,7 @@ jobs:
       platform: macos-aarch64
       bootjdk-platform: macos-aarch64
       runs-on: macos-14
-    if: github.event.inputs.run_tests
+    if: github.event.inputs.run_tests == 'true'
 
   test-windows-x64:
     name: windows-x64
@@ -348,4 +348,4 @@ jobs:
       platform: windows-x64
       bootjdk-platform: windows-x64
       runs-on: windows-2019
-    if: github.event.inputs.run_tests
+    if: github.event.inputs.run_tests == 'true'
