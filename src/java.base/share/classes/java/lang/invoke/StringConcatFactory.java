@@ -27,6 +27,7 @@ package java.lang.invoke;
 
 import jdk.internal.access.JavaLangAccess;
 import jdk.internal.access.SharedSecrets;
+import jdk.internal.constant.ConstantUtils;
 import jdk.internal.javac.PreviewFeature;
 import jdk.internal.misc.VM;
 import jdk.internal.util.ClassFileDumper;
@@ -1109,13 +1110,13 @@ public final class StringConcatFactory {
         private static MethodHandle generate(Lookup lookup, MethodType args, String[] constants) throws Exception {
             String className = getClassName(lookup.lookupClass());
 
-            byte[] classBytes = ClassFile.of().build(ClassDesc.of(className),
+            byte[] classBytes = ClassFile.of().build(ConstantUtils.binaryNameToDesc(className),
                     new Consumer<ClassBuilder>() {
                         @Override
                         public void accept(ClassBuilder clb) {
                             clb.withFlags(AccessFlag.FINAL, AccessFlag.SUPER, AccessFlag.SYNTHETIC)
                                 .withMethodBody(METHOD_NAME,
-                                        MethodTypeDesc.ofDescriptor(args.toMethodDescriptorString()),
+                                        ConstantUtils.methodTypeDesc(args),
                                         ClassFile.ACC_FINAL | ClassFile.ACC_PRIVATE | ClassFile.ACC_STATIC,
                                         generateMethod(constants, args));
                     }});

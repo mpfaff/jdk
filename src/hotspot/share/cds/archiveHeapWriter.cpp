@@ -67,8 +67,10 @@ ArchiveHeapWriter::BufferOffsetToSourceObjectTable*
   ArchiveHeapWriter::_buffer_offset_to_source_obj_table = nullptr;
 
 
-typedef ResourceHashtable<address, size_t,
-      127, // prime number
+typedef ResourceHashtable<
+      size_t,    // offset of a filler from ArchiveHeapWriter::buffer_bottom()
+      size_t,    // size of this filler (in bytes)
+      127,       // prime number
       AnyObj::C_HEAP,
       mtClassShared> FillersTable;
 static FillersTable* _fillers;
@@ -87,7 +89,7 @@ void ArchiveHeapWriter::init() {
     _source_objs = new GrowableArrayCHeap<oop, mtClassShared>(10000);
 
     guarantee(UseG1GC, "implementation limitation");
-    guarantee(MIN_GC_REGION_ALIGNMENT <= /*G1*/HeapRegion::min_region_size_in_words() * HeapWordSize, "must be");
+    guarantee(MIN_GC_REGION_ALIGNMENT <= G1HeapRegion::min_region_size_in_words() * HeapWordSize, "must be");
   }
 }
 
@@ -361,12 +363,12 @@ void ArchiveHeapWriter::maybe_fill_gc_region_gap(size_t required_byte_size) {
                         array_length, fill_bytes, _buffer_used);
     HeapWord* filler = init_filler_array_at_buffer_top(array_length, fill_bytes);
     _buffer_used = filler_end;
-    _fillers->put((address)filler, fill_bytes);
+    _fillers->put(buffered_address_to_offset((address)filler), fill_bytes);
   }
 }
 
 size_t ArchiveHeapWriter::get_filler_size_at(address buffered_addr) {
-  size_t* p = _fillers->get(buffered_addr);
+  size_t* p = _fillers->get(buffered_address_to_offset(buffered_addr));
   if (p != nullptr) {
     assert(*p > 0, "filler must be larger than zero bytes");
     return *p;
@@ -437,7 +439,7 @@ void ArchiveHeapWriter::set_requested_address(ArchiveHeapInfo* info) {
 
 
   if (UseCompressedOops) {
-    _requested_bottom = align_down(heap_end - heap_region_byte_size, HeapRegion::GrainBytes);
+    _requested_bottom = align_down(heap_end - heap_region_byte_size, G1HeapRegion::GrainBytes);
   } else {
     // We always write the objects as if the heap started at this address. This
     // makes the contents of the archive heap deterministic.
@@ -447,7 +449,7 @@ void ArchiveHeapWriter::set_requested_address(ArchiveHeapInfo* info) {
     _requested_bottom = (address)NOCOOPS_REQUESTED_BASE;
   }
 
-  assert(is_aligned(_requested_bottom, HeapRegion::GrainBytes), "sanity");
+  assert(is_aligned(_requested_bottom, G1HeapRegion::GrainBytes), "sanity");
 
   _requested_top = _requested_bottom + _buffer_used;
 
