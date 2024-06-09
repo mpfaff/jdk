@@ -329,7 +329,7 @@ public class TypeEnter implements Completer {
                 sym.owner.complete();
         }
 
-        private void importJavaLang(JCCompilationUnit tree, Env<AttrContext> env, ImportFilter typeImportFilter) {
+        private void implicitImports(JCCompilationUnit tree, Env<AttrContext> env) {
             // Import-on-demand java.lang.
             PackageSymbol javaLang = syms.enterPackage(syms.java_base, names.java_lang);
             if (javaLang.members().isEmpty() && !javaLang.exists()) {
@@ -338,6 +338,28 @@ public class TypeEnter implements Completer {
             }
             importAll(make.at(tree.pos()).Import(make.Select(make.QualIdent(javaLang.owner), javaLang), false),
                 javaLang, env);
+
+            List<JCTree> defs = tree.getTypeDecls();
+            boolean isImplicitClass = !defs.isEmpty() &&
+                    defs.head instanceof JCClassDecl cls &&
+                    (cls.mods.flags & IMPLICIT_CLASS) != 0;
+            if (isImplicitClass) {
+                doModuleImport(make.ModuleImport(make.QualIdent(syms.java_base)));
+                if (peekTypeExists(syms.ioType.tsym)) {
+                    doImport(make.Import(make.Select(make.QualIdent(syms.ioType.tsym),
+                            names.asterisk), true));
+                }
+            }
+        }
+
+        private boolean peekTypeExists(TypeSymbol type) {
+            try {
+                type.complete();
+                return !type.type.isErroneous();
+            } catch (CompletionFailure cf) {
+                //does not exist
+                return false;
+            }
         }
 
         private void staticImports(JCCompilationUnit tree, Env<AttrContext> env, ImportFilter staticImportFilter) {
@@ -383,7 +405,7 @@ public class TypeEnter implements Completer {
                         (origin, sym) -> sym.kind == TYP &&
                                          chk.importAccessible(sym, packge);
 
-                importJavaLang(tree, env, typeImportFilter);
+                implicitImports(tree, env);
                 staticImports(tree, env, staticImportFilter);
 
                 JCModuleDecl decl = tree.getModuleDecl();
@@ -504,7 +526,7 @@ public class TypeEnter implements Completer {
                     }
 
                     for (ExportsDirective export : currentModule.exports) {
-                        if (export.modules != null && !export.modules.contains(env.toplevel.packge.modle)) {
+                        if (export.modules != null && !export.modules.contains(env.toplevel.modle)) {
                             continue;
                         }
 
