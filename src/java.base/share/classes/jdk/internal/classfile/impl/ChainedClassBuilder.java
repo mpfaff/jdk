@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2022, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -59,7 +59,7 @@ public final class ChainedClassBuilder
     @Override
     public ClassBuilder withField(Utf8Entry name, Utf8Entry descriptor, Consumer<? super FieldBuilder> handler) {
         return with(new BufferedFieldBuilder(terminal.constantPool, terminal.context,
-                                                        name, descriptor, null)
+                                             name, descriptor, null)
                                        .run(handler)
                                        .toModel());
     }
@@ -77,7 +77,7 @@ public final class ChainedClassBuilder
     public ClassBuilder withMethod(Utf8Entry name, Utf8Entry descriptor, int flags,
                                    Consumer<? super MethodBuilder> handler) {
         return with(new BufferedMethodBuilder(terminal.constantPool, terminal.context,
-                                                         name, descriptor, null)
+                                              name, descriptor, null)
                                        .run(handler)
                                        .toModel());
     }
@@ -85,7 +85,7 @@ public final class ChainedClassBuilder
     @Override
     public ClassBuilder transformMethod(MethodModel method, MethodTransform transform) {
         BufferedMethodBuilder builder = new BufferedMethodBuilder(terminal.constantPool, terminal.context,
-                                                                  method.methodName(), method.methodType(), method);
+                                                                  method.methodName(), method.methodType(), method.flags().flagsMask(), method);
         builder.transform(method, transform);
         return with(builder.toModel());
     }
