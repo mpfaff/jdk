@@ -65,7 +65,6 @@ import java.util.PropertyPermission;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -2265,6 +2264,7 @@ public final class System {
             super(fd);
         }
 
+        @Override
         public void write(int b) throws IOException {
             boolean attempted = Blocker.begin();
             try {
@@ -2565,6 +2565,9 @@ public final class System {
             public char getUTF16Char(byte[] bytes, int index) {
                 return StringUTF16.getChar(bytes, index);
             }
+            public void putCharUTF16(byte[] bytes, int index, int ch) {
+                StringUTF16.putChar(bytes, index, ch);
+            }
             public byte[] getBytesNoRepl(String s, Charset cs) throws CharacterCodingException {
                 return String.getBytesNoRepl(s, cs);
             }
@@ -2615,6 +2618,10 @@ public final class System {
 
             public long stringConcatMix(long lengthCoder, String constant) {
                 return StringConcatHelper.mix(lengthCoder, constant);
+            }
+
+            public long stringConcatMix(long lengthCoder, char value) {
+                return StringConcatHelper.mix(lengthCoder, value);
             }
 
             @PreviewFeature(feature=PreviewFeature.Feature.STRING_TEMPLATES)
@@ -2674,14 +2681,6 @@ public final class System {
 
             public Thread currentCarrierThread() {
                 return Thread.currentCarrierThread();
-            }
-
-            public <V> V executeOnCarrierThread(Callable<V> task) throws Exception {
-                if (Thread.currentThread() instanceof VirtualThread vthread) {
-                    return vthread.executeOnCarrierThread(task);
-                } else {
-                    return task.call();
-                }
             }
 
             public <T> T getCarrierThreadLocal(CarrierThreadLocal<T> local) {

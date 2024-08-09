@@ -136,14 +136,8 @@ public final class StringConcatFactory {
      * While the maximum number of argument slots that indy call can handle is 253,
      * we do not use all those slots, to let the strategies with MethodHandle
      * combinators to use some arguments.
-     *
-     * @since 21
      */
-    @PreviewFeature(feature=PreviewFeature.Feature.STRING_TEMPLATES)
-    public static final int MAX_INDY_CONCAT_ARG_SLOTS;
-    // Use static initialize block to avoid MAX_INDY_CONCAT_ARG_SLOTS being treating
-    // as a constant for constant folding.
-    static { MAX_INDY_CONCAT_ARG_SLOTS = 200; }
+    private static final int MAX_INDY_CONCAT_ARG_SLOTS = 200;
 
     private static final JavaLangAccess JLA = SharedSecrets.getJavaLangAccess();
 
@@ -576,17 +570,17 @@ public final class StringConcatFactory {
 
         // Fold in byte[] instantiation at argument 0
         MethodHandle newArrayCombinator;
-        if (suffix != null) {
-            // newArray variant that deals with prepending any trailing constant
-            //
-            // initialLengthCoder is adjusted to have the correct coder
-            // and length: The newArrayWithSuffix method expects only the coder of the
-            // suffix to be encoded into indexCoder
-            initialLengthCoder -= suffix.length();
-            newArrayCombinator = newArrayWithSuffix(suffix);
-        } else {
-            newArrayCombinator = newArray();
+        if (suffix == null || suffix.isEmpty()) {
+            suffix = "";
         }
+        // newArray variant that deals with prepending any trailing constant
+        //
+        // initialLengthCoder is adjusted to have the correct coder
+        // and length: The newArrayWithSuffix method expects only the coder of the
+        // suffix to be encoded into indexCoder
+        initialLengthCoder -= suffix.length();
+        newArrayCombinator = newArrayWithSuffix(suffix);
+
         mh = MethodHandles.foldArgumentsWithCombiner(mh, 0, newArrayCombinator,
                 1 // index
         );
@@ -752,12 +746,7 @@ public final class StringConcatFactory {
         int idx = classIndex(cl);
         MethodHandle prepend = NO_PREFIX_PREPENDERS[idx];
         if (prepend == null) {
-            if (idx == STRING_CONCAT_ITEM) {
-                cl = FormatConcatItem.class;
-            }
-            NO_PREFIX_PREPENDERS[idx] = prepend = JLA.stringConcatHelper("prepend",
-                    methodType(long.class, long.class, byte[].class,
-                            Wrapper.asPrimitiveType(cl))).rebind();
+            NO_PREFIX_PREPENDERS[idx] = prepend = MethodHandles.insertArguments(prepender(cl), 3, "");
         }
         return prepend;
     }
@@ -919,16 +908,6 @@ public final class StringConcatFactory {
             NEW_ARRAY_SUFFIX = mh = newArrayWithSuffix.rebind();
         }
         return MethodHandles.insertArguments(mh, 0, suffix);
-    }
-
-    private @Stable static MethodHandle NEW_ARRAY;
-    private static MethodHandle newArray() {
-        MethodHandle mh = NEW_ARRAY;
-        if (mh == null) {
-            NEW_ARRAY = mh =
-                    JLA.stringConcatHelper("newArray", methodType(byte[].class, long.class));
-        }
-        return mh;
     }
 
     /**
@@ -1296,8 +1275,7 @@ public final class StringConcatFactory {
 
         String lastFragment = fragments.getLast();
         initialLengthCoder -= lastFragment.length();
-        MethodHandle newArrayCombinator = lastFragment.isEmpty() ? newArray() :
-                newArrayWithSuffix(lastFragment);
+        MethodHandle newArrayCombinator = newArrayWithSuffix(lastFragment);
         // (long,ttypes...) -> String
         mh = MethodHandles.foldArgumentsWithCombiner(mh, 0, newArrayCombinator,
                 1 // index

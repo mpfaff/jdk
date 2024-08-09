@@ -42,7 +42,6 @@ import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Stream;
@@ -366,6 +365,15 @@ public interface JavaLangAccess {
     char getUTF16Char(byte[] bytes, int index);
 
     /**
+     * Put the char at index in a byte[] in internal UTF-16 representation,
+     * with no bounds checks.
+     *
+     * @param bytes the UTF-16 encoded bytes
+     * @param index of the char to retrieve, 0 <= index < (bytes.length >> 1)
+     */
+    void putCharUTF16(byte[] bytes, int index, int ch);
+
+    /**
      * Encode the given string into a sequence of bytes using utf8.
      *
      * @param s the string to encode
@@ -498,11 +506,6 @@ public interface JavaLangAccess {
      * current thread is a virtual thread then this method returns the carrier.
      */
     Thread currentCarrierThread();
-
-    /**
-     * Executes the given value returning task on the current carrier thread.
-     */
-    <V> V executeOnCarrierThread(Callable<V> task) throws Exception;
 
     /**
      * Returns the value of the current carrier thread's copy of a thread-local.
