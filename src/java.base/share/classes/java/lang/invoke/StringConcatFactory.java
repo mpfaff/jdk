@@ -136,8 +136,14 @@ public final class StringConcatFactory {
      * While the maximum number of argument slots that indy call can handle is 253,
      * we do not use all those slots, to let the strategies with MethodHandle
      * combinators to use some arguments.
+     *
+     * @since 21
      */
-    private static final int MAX_INDY_CONCAT_ARG_SLOTS = 200;
+    @PreviewFeature(feature=PreviewFeature.Feature.STRING_TEMPLATES)
+    public static final int MAX_INDY_CONCAT_ARG_SLOTS;
+    // Use static initialize block to avoid MAX_INDY_CONCAT_ARG_SLOTS being treating
+    // as a constant for constant folding.
+    static { MAX_INDY_CONCAT_ARG_SLOTS = 200; }
 
     private static final JavaLangAccess JLA = SharedSecrets.getJavaLangAccess();
 
