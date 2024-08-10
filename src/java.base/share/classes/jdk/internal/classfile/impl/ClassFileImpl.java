@@ -104,14 +104,21 @@ public record ClassFileImpl(StackMapsOption stackMapsOption,
         return new ClassImpl(bytes, this);
     }
 
-    @Override
-    public byte[] build(ClassEntry thisClassEntry,
+    private byte[] build(ClassEntry thisClassEntry,
                          ConstantPoolBuilder constantPool,
+                         ClassModel original,
                          Consumer<? super ClassBuilder> handler) {
         thisClassEntry = AbstractPoolEntry.maybeClone(constantPool, thisClassEntry);
-        DirectClassBuilder builder = new DirectClassBuilder((SplitConstantPool)constantPool, this, thisClassEntry);
+        DirectClassBuilder builder = new DirectClassBuilder((SplitConstantPool)constantPool, this, thisClassEntry, original);
         handler.accept(builder);
         return builder.build();
+    }
+
+    @Override
+    public byte[] build(ClassEntry thisClassEntry,
+                        ConstantPoolBuilder constantPool,
+                        Consumer<? super ClassBuilder> handler) {
+        return build(thisClassEntry, constantPool, null, handler);
     }
 
     @Override
@@ -119,11 +126,10 @@ public record ClassFileImpl(StackMapsOption stackMapsOption,
         ConstantPoolBuilder constantPool = constantPoolSharingOption() == ConstantPoolSharingOption.SHARED_POOL
                                                                      ? ConstantPoolBuilder.of(model)
                                                                      : ConstantPoolBuilder.of();
-        return build(newClassName, constantPool,
+        return build(newClassName, constantPool, model,
                 new Consumer<ClassBuilder>() {
                     @Override
                     public void accept(ClassBuilder builder) {
-                        ((DirectClassBuilder) builder).setOriginal((ClassImpl)model);
                         ((DirectClassBuilder) builder).setSizeHint(((ClassImpl)model).classfileLength());
                         builder.transform((ClassImpl)model, transform);
                     }

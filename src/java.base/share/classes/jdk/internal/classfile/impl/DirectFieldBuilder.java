@@ -25,6 +25,10 @@
 
 package jdk.internal.classfile.impl;
 
+import jdk.internal.vm.annotation.Stable;
+
+import java.lang.constant.ClassDesc;
+import java.lang.constant.MethodTypeDesc;
 import java.util.function.Consumer;
 
 import java.lang.classfile.CustomAttribute;
@@ -39,17 +43,36 @@ public final class DirectFieldBuilder
     private final Utf8Entry name;
     private final Utf8Entry desc;
     private int flags;
+    @Stable
+    private ClassDesc fDesc;
 
     public DirectFieldBuilder(SplitConstantPool constantPool,
                               ClassFileImpl context,
                               Utf8Entry name,
                               Utf8Entry type,
                               FieldModel original) {
-        super(constantPool, context);
-        setOriginal(original);
+        super(constantPool, context, original);
         this.name = name;
         this.desc = type;
         this.flags = 0;
+    }
+
+    @Override
+    public Utf8Entry fieldName() {
+        return name;
+    }
+
+    @Override
+    public Utf8Entry fieldType() {
+        return desc;
+    }
+
+    @Override
+    public ClassDesc fieldTypeSymbol() {
+        if (fDesc == null) {
+            fDesc = original.fieldTypeSymbol();
+        }
+        return fDesc;
     }
 
     @Override

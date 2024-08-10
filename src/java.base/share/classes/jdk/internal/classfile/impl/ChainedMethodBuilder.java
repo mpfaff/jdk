@@ -24,6 +24,8 @@
  */
 package jdk.internal.classfile.impl;
 
+import java.lang.classfile.constantpool.Utf8Entry;
+import java.lang.constant.MethodTypeDesc;
 import java.util.function.Consumer;
 
 import java.lang.classfile.CodeBuilder;
@@ -44,6 +46,21 @@ public final class ChainedMethodBuilder implements MethodBuilder {
             case ChainedMethodBuilder cb -> cb.terminal;
             case TerminalMethodBuilder tb -> tb;
         };
+    }
+
+    @Override
+    public Utf8Entry methodName() {
+        return this.terminal.methodName();
+    }
+
+    @Override
+    public Utf8Entry methodType() {
+        return this.terminal.methodType();
+    }
+
+    @Override
+    public MethodTypeDesc methodTypeSymbol() {
+        return this.terminal.methodTypeSymbol();
     }
 
     @Override

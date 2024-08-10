@@ -25,6 +25,7 @@
 
 package java.lang.classfile;
 
+import java.lang.constant.MethodTypeDesc;
 import java.util.function.Consumer;
 
 import java.lang.classfile.constantpool.Utf8Entry;
@@ -50,6 +51,10 @@ import jdk.internal.javac.PreviewFeature;
 public sealed interface MethodBuilder
         extends ClassFileBuilder<MethodElement, MethodBuilder>
         permits ChainedMethodBuilder, TerminalMethodBuilder {
+
+    Utf8Entry methodName();
+    Utf8Entry methodType();
+    MethodTypeDesc methodTypeSymbol();
 
     /**
      * Sets the method access flags.

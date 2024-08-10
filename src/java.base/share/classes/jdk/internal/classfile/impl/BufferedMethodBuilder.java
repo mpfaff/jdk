@@ -24,6 +24,8 @@
  */
 package jdk.internal.classfile.impl;
 
+import jdk.internal.vm.annotation.Stable;
+
 import java.lang.constant.MethodTypeDesc;
 import java.lang.reflect.AccessFlag;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public final class BufferedMethodBuilder
     private AccessFlags flags;
     private final MethodModel original;
     private int[] parameterSlots;
+    @Stable
     MethodTypeDesc mDesc;
 
     public BufferedMethodBuilder(SplitConstantPool constantPool,
@@ -103,11 +106,7 @@ public final class BufferedMethodBuilder
     @Override
     public MethodTypeDesc methodTypeSymbol() {
         if (mDesc == null) {
-            if (original instanceof MethodInfo mi) {
-                mDesc = mi.methodTypeSymbol();
-            } else {
-                mDesc = MethodTypeDesc.ofDescriptor(methodType().stringValue());
-            }
+            mDesc = original.methodTypeSymbol();
         }
         return mDesc;
     }

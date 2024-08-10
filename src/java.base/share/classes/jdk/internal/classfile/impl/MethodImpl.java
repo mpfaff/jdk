@@ -24,6 +24,8 @@
  */
 package jdk.internal.classfile.impl;
 
+import jdk.internal.vm.annotation.Stable;
+
 import java.lang.constant.MethodTypeDesc;
 import java.lang.classfile.*;
 import java.lang.classfile.constantpool.Utf8Entry;
@@ -41,6 +43,7 @@ public final class MethodImpl
     private final int startPos, endPos, attributesPos;
     private List<Attribute<?>> attributes;
     private int[] parameterSlots;
+    @Stable
     private MethodTypeDesc mDesc;
 
     public MethodImpl(ClassReader reader, int startPos, int endPos, int attrStart) {

@@ -121,8 +121,7 @@ public final class DirectCodeBuilder
                               ClassFileImpl context,
                               CodeModel original,
                               boolean transformFwdJumps) {
-        super(constantPool, context);
-        setOriginal(original);
+        super(constantPool, context, original);
         this.methodInfo = methodInfo;
         this.transformFwdJumps = transformFwdJumps;
         this.transformBackJumps = context.shortJumpsOption() == ClassFile.ShortJumpsOption.FIX_SHORT_JUMPS;

@@ -24,6 +24,7 @@
  */
 package jdk.internal.classfile.impl;
 
+import java.lang.classfile.constantpool.ClassEntry;
 import java.util.function.Consumer;
 
 import java.lang.classfile.*;
@@ -42,6 +43,11 @@ public final class ChainedClassBuilder
             case ChainedClassBuilder cb -> cb.terminal;
             case DirectClassBuilder db -> db;
         };
+    }
+
+    @Override
+    public ClassEntry thisClass() {
+        return this.terminal.thisClass();
     }
 
     @Override

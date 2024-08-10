@@ -24,6 +24,8 @@
  */
 package jdk.internal.classfile.impl;
 
+import java.lang.classfile.constantpool.Utf8Entry;
+import java.lang.constant.ClassDesc;
 import java.util.function.Consumer;
 
 import java.lang.classfile.FieldBuilder;
@@ -41,6 +43,21 @@ public final class ChainedFieldBuilder implements FieldBuilder {
             case ChainedFieldBuilder cb -> cb.terminal;
             case TerminalFieldBuilder tb -> tb;
         };
+    }
+
+    @Override
+    public Utf8Entry fieldName() {
+        return terminal.fieldName();
+    }
+
+    @Override
+    public Utf8Entry fieldType() {
+        return terminal.fieldType();
+    }
+
+    @Override
+    public ClassDesc fieldTypeSymbol() {
+        return terminal.fieldTypeSymbol();
     }
 
     @Override

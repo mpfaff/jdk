@@ -30,6 +30,9 @@ import java.lang.classfile.constantpool.Utf8Entry;
 import jdk.internal.classfile.impl.AccessFlagsImpl;
 import jdk.internal.classfile.impl.ChainedFieldBuilder;
 import jdk.internal.classfile.impl.TerminalFieldBuilder;
+
+import java.lang.constant.ClassDesc;
+import java.lang.constant.MethodTypeDesc;
 import java.lang.reflect.AccessFlag;
 
 import java.util.function.Consumer;
@@ -50,6 +53,10 @@ import jdk.internal.javac.PreviewFeature;
 public sealed interface FieldBuilder
         extends ClassFileBuilder<FieldElement, FieldBuilder>
         permits TerminalFieldBuilder, ChainedFieldBuilder {
+
+    Utf8Entry fieldName();
+    Utf8Entry fieldType();
+    ClassDesc fieldTypeSymbol();
 
     /**
      * Sets the field access flags.

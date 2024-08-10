@@ -60,6 +60,11 @@ public sealed interface ClassBuilder
         permits ChainedClassBuilder, DirectClassBuilder {
 
     /**
+     * Returns the class entry representing the class being built.
+     */
+    ClassEntry thisClass();
+
+    /**
      * Sets the classfile version.
      * @param major the major version number
      * @param minor the minor version number

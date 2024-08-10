@@ -61,14 +61,20 @@ public final class DirectClassBuilder
 
     public DirectClassBuilder(SplitConstantPool constantPool,
                               ClassFileImpl context,
-                              ClassEntry thisClass) {
-        super(constantPool, context);
+                              ClassEntry thisClass,
+                              ClassModel original) {
+        super(constantPool, context, original);
         this.thisClassEntry = AbstractPoolEntry.maybeClone(constantPool, thisClass);
         this.flags = ClassFile.DEFAULT_CLASS_FLAGS;
         this.superclassEntry = null;
         this.interfaceEntries = Collections.emptyList();
         this.majorVersion = ClassFile.latestMajorVersion();
         this.minorVersion = ClassFile.latestMinorVersion();
+    }
+
+    @Override
+    public ClassEntry thisClass() {
+        return this.thisClassEntry;
     }
 
     @Override

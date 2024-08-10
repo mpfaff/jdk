@@ -25,6 +25,8 @@
 
 package jdk.internal.classfile.impl;
 
+import jdk.internal.vm.annotation.Stable;
+
 import java.lang.constant.MethodTypeDesc;
 import java.util.function.Consumer;
 
@@ -46,6 +48,7 @@ public final class DirectMethodBuilder
     final Utf8Entry desc;
     int flags;
     int[] parameterSlots;
+    @Stable
     MethodTypeDesc mDesc;
 
     public DirectMethodBuilder(SplitConstantPool constantPool,
@@ -54,8 +57,7 @@ public final class DirectMethodBuilder
                                Utf8Entry typeInfo,
                                int flags,
                                MethodModel original) {
-        super(constantPool, context);
-        setOriginal(original);
+        super(constantPool, context, original);
         this.name = nameInfo;
         this.desc = typeInfo;
         this.flags = flags;
@@ -82,11 +84,7 @@ public final class DirectMethodBuilder
     @Override
     public MethodTypeDesc methodTypeSymbol() {
         if (mDesc == null) {
-            if (original instanceof MethodInfo mi) {
-                mDesc = mi.methodTypeSymbol();
-            } else {
-                mDesc = MethodTypeDesc.ofDescriptor(methodType().stringValue());
-            }
+            mDesc = original.methodTypeSymbol();
         }
         return mDesc;
     }

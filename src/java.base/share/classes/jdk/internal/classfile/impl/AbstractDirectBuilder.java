@@ -31,11 +31,12 @@ public class AbstractDirectBuilder<M> {
     protected final SplitConstantPool constantPool;
     protected final ClassFileImpl context;
     protected final AttributeHolder attributes = new AttributeHolder();
-    protected M original;
+    protected final M original;
 
-    public AbstractDirectBuilder(SplitConstantPool constantPool, ClassFileImpl context) {
+    public AbstractDirectBuilder(SplitConstantPool constantPool, ClassFileImpl context, M original) {
         this.constantPool = constantPool;
         this.context = context;
+        this.original = original;
     }
 
     public SplitConstantPool constantPool() {
@@ -44,10 +45,6 @@ public class AbstractDirectBuilder<M> {
 
     public boolean canWriteDirect(ConstantPool source) {
         return constantPool().canWriteDirect(source);
-    }
-
-    public void setOriginal(M original) {
-        this.original = original;
     }
 
     public void writeAttribute(Attribute<?> a) {
