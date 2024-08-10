@@ -73,20 +73,7 @@ public class VThreadScheduler {
      * @throws UnsupportedOperationException if custom schedulers are not supported
      */
     public static Thread.Builder.OfVirtual virtualThreadBuilder(Executor scheduler) {
-        try {
-            Class<?> clazz = Class.forName("java.lang.ThreadBuilders$VirtualThreadBuilder");
-            Constructor<?> ctor = clazz.getDeclaredConstructor(Executor.class);
-            ctor.setAccessible(true);
-            return (Thread.Builder.OfVirtual) ctor.newInstance(scheduler);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException re) {
-                throw re;
-            }
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return Thread.ofVirtual().scheduler(scheduler);
     }
 
     /**

@@ -214,13 +214,6 @@ class ThreadBuilders {
         VirtualThreadBuilder() {
         }
 
-        // invoked by tests
-        VirtualThreadBuilder(Executor scheduler) {
-            if (!ContinuationSupport.isSupported())
-                throw new UnsupportedOperationException();
-            this.scheduler = Objects.requireNonNull(scheduler);
-        }
-
         @Override
         public OfVirtual name(String name) {
             setName(name);
@@ -242,6 +235,14 @@ class ThreadBuilders {
         @Override
         public OfVirtual uncaughtExceptionHandler(UncaughtExceptionHandler ueh) {
             setUncaughtExceptionHandler(ueh);
+            return this;
+        }
+
+        @Override
+        public OfVirtual scheduler(Executor scheduler) {
+            if (!ContinuationSupport.isSupported())
+                throw new UnsupportedOperationException();
+            this.scheduler = Objects.requireNonNull(scheduler);
             return this;
         }
 

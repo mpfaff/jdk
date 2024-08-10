@@ -201,21 +201,7 @@ public class JNIMonitor {
         // The original issue was also only discovered due to the carrier thread terminating
         // unexpectedly, so we can force that condition too by shutting down our custom scheduler.
         private static Thread.Builder.OfVirtual virtualThreadBuilder(Executor scheduler) {
-            Thread.Builder.OfVirtual builder = Thread.ofVirtual();
-            try {
-                Class<?> clazz = Class.forName("java.lang.ThreadBuilders$VirtualThreadBuilder");
-                Constructor<?> ctor = clazz.getDeclaredConstructor(Executor.class);
-                ctor.setAccessible(true);
-                return (Thread.Builder.OfVirtual) ctor.newInstance(scheduler);
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                if (cause instanceof RuntimeException re) {
-                    throw re;
-                }
-                throw new RuntimeException(e);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return Thread.ofVirtual().scheduler(scheduler);
         }
 
         static void runTest(int nThreads, boolean skipUnlock, boolean throwOnExit) throws Throwable {

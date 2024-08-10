@@ -68,7 +68,7 @@ import static java.util.concurrent.TimeUnit.*;
 final class VirtualThread extends BaseVirtualThread {
     private static final Unsafe U = Unsafe.getUnsafe();
     private static final ContinuationScope VTHREAD_SCOPE = new ContinuationScope("VirtualThreads");
-    private static final ForkJoinPool DEFAULT_SCHEDULER = createDefaultScheduler();
+    static final Executor DEFAULT_SCHEDULER = createDefaultScheduler();
     private static final ScheduledExecutorService[] DELAYED_TASK_SCHEDULERS = createDelayedTaskSchedulers();
     private static final int TRACE_PINNING_MODE = tracePinningMode();
 
@@ -167,12 +167,7 @@ final class VirtualThread extends BaseVirtualThread {
 
         // choose scheduler if not specified
         if (scheduler == null) {
-            Thread parent = Thread.currentThread();
-            if (parent instanceof VirtualThread vparent) {
-                scheduler = vparent.scheduler;
-            } else {
-                scheduler = DEFAULT_SCHEDULER;
-            }
+            scheduler = VIRTUAL_THREAD_SCHEDULER.orElse(DEFAULT_SCHEDULER);
         }
 
         this.scheduler = scheduler;
@@ -1216,7 +1211,7 @@ final class VirtualThread extends BaseVirtualThread {
     /**
      * Disallow the current thread be suspended or preempted.
      */
-    private void disableSuspendAndPreempt() {
+    void disableSuspendAndPreempt() {
         notifyJvmtiDisableSuspend(true);
         Continuation.pin();
     }
@@ -1224,7 +1219,7 @@ final class VirtualThread extends BaseVirtualThread {
     /**
      * Allow the current thread be suspended or preempted.
      */
-    private void enableSuspendAndPreempt() {
+    void enableSuspendAndPreempt() {
         Continuation.unpin();
         notifyJvmtiDisableSuspend(false);
     }
@@ -1302,12 +1297,12 @@ final class VirtualThread extends BaseVirtualThread {
      * Creates the default ForkJoinPool scheduler.
      */
     @SuppressWarnings("removal")
-    private static ForkJoinPool createDefaultScheduler() {
+    private static Executor createDefaultScheduler() {
         ForkJoinWorkerThreadFactory factory = pool -> {
             PrivilegedAction<ForkJoinWorkerThread> pa = () -> new CarrierThread(pool);
             return AccessController.doPrivileged(pa);
         };
-        PrivilegedAction<ForkJoinPool> pa = () -> {
+        PrivilegedAction<Executor> pa = () -> {
             int parallelism, maxPoolSize, minRunnable;
             String parallelismValue = System.getProperty("jdk.virtualThreadScheduler.parallelism");
             String maxPoolSizeValue = System.getProperty("jdk.virtualThreadScheduler.maxPoolSize");
@@ -1330,8 +1325,10 @@ final class VirtualThread extends BaseVirtualThread {
             }
             Thread.UncaughtExceptionHandler handler = (t, e) -> { };
             boolean asyncMode = true; // FIFO
-            return new ForkJoinPool(parallelism, factory, handler, asyncMode,
-                         0, maxPoolSize, minRunnable, pool -> true, 30, SECONDS);
+            var pool = new ForkJoinPool(parallelism, factory, handler, asyncMode,
+                         0, maxPoolSize, minRunnable, _ -> true, 30, SECONDS);
+            // don't expose the Executor implementation
+            return pool::execute;
         };
         return AccessController.doPrivileged(pa);
     }

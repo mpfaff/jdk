@@ -123,9 +123,6 @@ public class WriteToReleasesCarrier {
      * Returns a builder to create virtual threads that use the given scheduler.
      */
     static Thread.Builder.OfVirtual virtualThreadBuilder(Executor scheduler) throws Exception {
-        Class<?> clazz = Class.forName("java.lang.ThreadBuilders$VirtualThreadBuilder");
-        Constructor<?> ctor = clazz.getDeclaredConstructor(Executor.class);
-        ctor.setAccessible(true);
-        return (Thread.Builder.OfVirtual) ctor.newInstance(scheduler);
+        return Thread.ofVirtual().scheduler(scheduler);
     }
 }

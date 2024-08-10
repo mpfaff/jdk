@@ -36,6 +36,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.StructureViolationException;
 import java.util.concurrent.locks.LockSupport;
@@ -219,9 +220,12 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 public class Thread implements Runnable {
     /* Make sure registerNatives is the first thing <clinit> does. */
     private static native void registerNatives();
+
     static {
         registerNatives();
     }
+
+    public static final ScopedValue<Executor> VIRTUAL_THREAD_SCHEDULER = ScopedValue.newInstance();
 
     /*
      * Reserved for exclusive use by the JVM. Cannot be moved to the FieldHolder
@@ -1064,6 +1068,8 @@ public class Thread implements Runnable {
 
             @Override OfVirtual inheritInheritableThreadLocals(boolean inherit);
             @Override OfVirtual uncaughtExceptionHandler(UncaughtExceptionHandler ueh);
+
+            OfVirtual scheduler(Executor scheduler);
         }
     }
 
@@ -1483,11 +1489,68 @@ public class Thread implements Runnable {
      * @since 21
      */
     public static Thread startVirtualThread(Runnable task) {
+        return startVirtualThread(task, null);
+    }
+
+    /**
+     * Creates a virtual thread to execute a task and schedules it to execute.
+     *
+     * <p> This method is equivalent to:
+     * <pre>{@code Thread.ofVirtual().start(task); }</pre>
+     *
+     * @param task the object to run when the thread executes
+     * @param scheduler may be {@code null} to use the scope scheduler.
+     * @return a new, and started, virtual thread
+     * @see <a href="#inheritance">Inheritance when creating threads</a>
+     * @since 21
+     */
+    public static Thread startVirtualThread(Runnable task, Executor scheduler) {
         Objects.requireNonNull(task);
-        var thread = ThreadBuilders.newVirtualThread(null, null, 0, task);
+        var thread = ThreadBuilders.newVirtualThread(scheduler, null, 0, task);
         thread.start();
         return thread;
     }
+
+    public static Executor defaultVirtualThreadExecutor() {
+        return VirtualThread.DEFAULT_SCHEDULER;
+    }
+
+    public static final class CarrierThreadPin implements AutoCloseable {
+        /**
+         * {@code null} if the "pinned" thread is a platform thread.
+         */
+        private final VirtualThread owner;
+        private boolean closed;
+
+		private CarrierThreadPin(VirtualThread owner) {
+			this.owner = owner;
+		}
+
+        /**
+         * @throws IllegalStateException if the current thread is not the pinned thread, or the thread has already been
+         *                               unpinned.
+         */
+		@Override
+        public void close() {
+            // In this case, we can just return on close because the thread is a platform thread and pinning has no
+            // effect.
+            if (this.owner == null) return;
+            if (Thread.currentThread() != this.owner) {
+                throw new IllegalStateException("CarrierThreadPin must be closed on the thread it was created");
+            }
+            if (this.closed) throw new IllegalStateException("Cannot unpin twice");
+            this.closed = true;
+            this.owner.enableSuspendAndPreempt();
+        }
+    }
+
+    public static CarrierThreadPin pinCarrierThread() {
+		if (!(Thread.currentThread() instanceof VirtualThread thread)) {
+            return new CarrierThreadPin(null);
+		}
+        thread.disableSuspendAndPreempt();
+		return new CarrierThreadPin(thread);
+	}
 
     /**
      * Returns {@code true} if this thread is a virtual thread. A virtual thread
