@@ -240,9 +240,9 @@ class ThreadBuilders {
 
         @Override
         public OfVirtual scheduler(Executor scheduler) {
-            if (!ContinuationSupport.isSupported())
+            if (scheduler != null && !ContinuationSupport.isSupported())
                 throw new UnsupportedOperationException();
-            this.scheduler = Objects.requireNonNull(scheduler);
+            this.scheduler = scheduler;
             return this;
         }
 

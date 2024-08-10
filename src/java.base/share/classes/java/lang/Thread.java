@@ -225,8 +225,6 @@ public class Thread implements Runnable {
         registerNatives();
     }
 
-    public static final ScopedValue<Executor> VIRTUAL_THREAD_SCHEDULER = ScopedValue.newInstance();
-
     /*
      * Reserved for exclusive use by the JVM. Cannot be moved to the FieldHolder
      * as it needs to be set by the VM for JNI attaching threads, before executing
@@ -1069,6 +1067,11 @@ public class Thread implements Runnable {
             @Override OfVirtual inheritInheritableThreadLocals(boolean inherit);
             @Override OfVirtual uncaughtExceptionHandler(UncaughtExceptionHandler ueh);
 
+            /**
+             * Sets the scheduler.
+             * @param scheduler
+             * @return this builder
+             */
             OfVirtual scheduler(Executor scheduler);
         }
     }
@@ -1511,10 +1514,9 @@ public class Thread implements Runnable {
         return thread;
     }
 
-    public static Executor defaultVirtualThreadExecutor() {
-        return VirtualThread.DEFAULT_SCHEDULER;
-    }
-
+    /**
+     * Keeps the current thread pinned until {@linkplain #close() closed}. Returned by {@link #pinCarrierThread()}.
+     */
     public static final class CarrierThreadPin implements AutoCloseable {
         /**
          * {@code null} if the "pinned" thread is a platform thread.
@@ -1544,6 +1546,10 @@ public class Thread implements Runnable {
         }
     }
 
+    /**
+     * Disallow the current thread be suspended or preempted until the returned pin is
+     * {@linkplain CarrierThreadPin#close() closed}.
+     */
     public static CarrierThreadPin pinCarrierThread() {
 		if (!(Thread.currentThread() instanceof VirtualThread thread)) {
             return new CarrierThreadPin(null);

@@ -68,7 +68,7 @@ import static java.util.concurrent.TimeUnit.*;
 final class VirtualThread extends BaseVirtualThread {
     private static final Unsafe U = Unsafe.getUnsafe();
     private static final ContinuationScope VTHREAD_SCOPE = new ContinuationScope("VirtualThreads");
-    static final Executor DEFAULT_SCHEDULER = createDefaultScheduler();
+    private static final Executor DEFAULT_SCHEDULER = createDefaultScheduler();
     private static final ScheduledExecutorService[] DELAYED_TASK_SCHEDULERS = createDelayedTaskSchedulers();
     private static final int TRACE_PINNING_MODE = tracePinningMode();
 
@@ -151,10 +151,8 @@ final class VirtualThread extends BaseVirtualThread {
 
     /**
      * Creates a new {@code VirtualThread} to run the given task with the given
-     * scheduler. If the given scheduler is {@code null} and the current thread
-     * is a platform thread then the newly created virtual thread will use the
-     * default scheduler. If given scheduler is {@code null} and the current
-     * thread is a virtual thread then the current thread's scheduler is used.
+     * scheduler. If the given scheduler is {@code null} then the newly created
+     * virtual thread will use the default scheduler.
      *
      * @param scheduler the scheduler or null
      * @param name thread name
@@ -167,7 +165,7 @@ final class VirtualThread extends BaseVirtualThread {
 
         // choose scheduler if not specified
         if (scheduler == null) {
-            scheduler = VIRTUAL_THREAD_SCHEDULER.orElse(DEFAULT_SCHEDULER);
+            scheduler = DEFAULT_SCHEDULER;
         }
 
         this.scheduler = scheduler;
