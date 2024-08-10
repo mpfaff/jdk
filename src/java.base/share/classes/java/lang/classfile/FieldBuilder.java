@@ -54,8 +54,13 @@ public sealed interface FieldBuilder
         extends ClassFileBuilder<FieldElement, FieldBuilder>
         permits TerminalFieldBuilder, ChainedFieldBuilder {
 
+    /** {@return the name of the field being built} */
     Utf8Entry fieldName();
+
+    /** {@return the field descriptor of the field being built} */
     Utf8Entry fieldType();
+
+    /** {@return the field descriptor of the field being built, as a symbolic descriptor} */
     ClassDesc fieldTypeSymbol();
 
     /**

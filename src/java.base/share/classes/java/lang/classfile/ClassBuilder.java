@@ -59,9 +59,7 @@ public sealed interface ClassBuilder
         extends ClassFileBuilder<ClassElement, ClassBuilder>
         permits ChainedClassBuilder, DirectClassBuilder {
 
-    /**
-     * Returns the class entry representing the class being built.
-     */
+    /** {@return the class entry representing the class being built} */
     ClassEntry thisClass();
 
     /**

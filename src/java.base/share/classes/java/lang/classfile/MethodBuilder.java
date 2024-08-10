@@ -52,8 +52,13 @@ public sealed interface MethodBuilder
         extends ClassFileBuilder<MethodElement, MethodBuilder>
         permits ChainedMethodBuilder, TerminalMethodBuilder {
 
+    /** {@return the name of the method being built} */
     Utf8Entry methodName();
+
+    /** {@return the method descriptor of the method being built} */
     Utf8Entry methodType();
+
+    /** {@return the method descriptor of the method being built, as a symbolic descriptor} */
     MethodTypeDesc methodTypeSymbol();
 
     /**
