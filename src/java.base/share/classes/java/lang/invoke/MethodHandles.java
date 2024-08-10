@@ -1529,7 +1529,7 @@ public class MethodHandles {
 
         private static final int ALL_MODES = (PUBLIC | PRIVATE | PROTECTED | PACKAGE | MODULE | UNCONDITIONAL | ORIGINAL);
         private static final int FULL_POWER_MODES = (ALL_MODES & ~UNCONDITIONAL);   // with original access
-        private static final int TRUSTED   = -1;
+        static final int TRUSTED   = -1;
 
         /*
          * Adjust PUBLIC => PUBLIC|MODULE|ORIGINAL|UNCONDITIONAL
@@ -1624,7 +1624,7 @@ public class MethodHandles {
             this(lookupClass, null, FULL_POWER_MODES);
         }
 
-        private Lookup(Class<?> lookupClass, Class<?> prevLookupClass, int allowedModes) {
+        Lookup(Class<?> lookupClass, Class<?> prevLookupClass, int allowedModes) {
             assert prevLookupClass == null || ((allowedModes & MODULE) == 0
                     && prevLookupClass.getModule() != lookupClass.getModule());
             assert !lookupClass.isArray() && !lookupClass.isPrimitive();

@@ -1643,6 +1643,11 @@ abstract class MethodHandleImpl {
                 return IMPL_LOOKUP.serializableConstructor(decl, ctorToCall);
             }
 
+            @Override
+            public Lookup makeTrustedLookup(Class<?> lookupClass) {
+                return new Lookup(lookupClass, null, Lookup.TRUSTED);
+            }
+
         });
     }
 
