@@ -68,7 +68,7 @@ import static java.util.concurrent.TimeUnit.*;
 final class VirtualThread extends BaseVirtualThread {
     private static final Unsafe U = Unsafe.getUnsafe();
     private static final ContinuationScope VTHREAD_SCOPE = new ContinuationScope("VirtualThreads");
-    private static final Executor DEFAULT_SCHEDULER = createDefaultScheduler();
+    private static final ForkJoinPool DEFAULT_SCHEDULER = createDefaultScheduler();
     private static final ScheduledExecutorService[] DELAYED_TASK_SCHEDULERS = createDelayedTaskSchedulers();
     private static final int TRACE_PINNING_MODE = tracePinningMode();
 
@@ -1295,12 +1295,12 @@ final class VirtualThread extends BaseVirtualThread {
      * Creates the default ForkJoinPool scheduler.
      */
     @SuppressWarnings("removal")
-    private static Executor createDefaultScheduler() {
+    private static ForkJoinPool createDefaultScheduler() {
         ForkJoinWorkerThreadFactory factory = pool -> {
             PrivilegedAction<ForkJoinWorkerThread> pa = () -> new CarrierThread(pool);
             return AccessController.doPrivileged(pa);
         };
-        PrivilegedAction<Executor> pa = () -> {
+        PrivilegedAction<ForkJoinPool> pa = () -> {
             int parallelism, maxPoolSize, minRunnable;
             String parallelismValue = System.getProperty("jdk.virtualThreadScheduler.parallelism");
             String maxPoolSizeValue = System.getProperty("jdk.virtualThreadScheduler.maxPoolSize");
@@ -1323,10 +1323,8 @@ final class VirtualThread extends BaseVirtualThread {
             }
             Thread.UncaughtExceptionHandler handler = (t, e) -> { };
             boolean asyncMode = true; // FIFO
-            var pool = new ForkJoinPool(parallelism, factory, handler, asyncMode,
+            return new ForkJoinPool(parallelism, factory, handler, asyncMode,
                          0, maxPoolSize, minRunnable, _ -> true, 30, SECONDS);
-            // don't expose the Executor implementation
-            return pool::execute;
         };
         return AccessController.doPrivileged(pa);
     }
