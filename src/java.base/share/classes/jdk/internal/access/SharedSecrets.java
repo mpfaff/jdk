@@ -25,6 +25,8 @@
 
 package jdk.internal.access;
 
+import jdk.internal.vm.annotation.Stable;
+
 import javax.crypto.SealedObject;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ObjectInputFilter;
@@ -56,44 +58,87 @@ import javax.security.auth.x500.X500Principal;
     for this purpose, namely the loss of compile-time checking. */
 
 public class SharedSecrets {
+    @Stable
     private static JavaAWTAccess javaAWTAccess;
+    @Stable
     private static JavaAWTFontAccess javaAWTFontAccess;
+    @Stable
     private static JavaBeansAccess javaBeansAccess;
+    @Stable
     private static JavaLangAccess javaLangAccess;
+    @Stable
     private static JavaLangInvokeAccess javaLangInvokeAccess;
+    @Stable
     private static JavaLangModuleAccess javaLangModuleAccess;
+    @Stable
     private static JavaLangRefAccess javaLangRefAccess;
+    @Stable
     private static JavaLangReflectAccess javaLangReflectAccess;
+    @Stable
     private static JavaIOAccess javaIOAccess;
+    @Stable
     private static JavaIOPrintStreamAccess javaIOPrintStreamAccess;
+    @Stable
     private static JavaIOPrintWriterAccess javaIOPrintWriterAccess;
+    @Stable
     private static JavaIOFileDescriptorAccess javaIOFileDescriptorAccess;
+    @Stable
     private static JavaIOFilePermissionAccess javaIOFilePermissionAccess;
+    @Stable
     private static JavaIORandomAccessFileAccess javaIORandomAccessFileAccess;
+    @Stable
     private static JavaObjectInputStreamReadString javaObjectInputStreamReadString;
+    @Stable
     private static JavaObjectInputStreamAccess javaObjectInputStreamAccess;
+    @Stable
     private static JavaObjectInputFilterAccess javaObjectInputFilterAccess;
+    @Stable
     private static JavaNetInetAddressAccess javaNetInetAddressAccess;
+    @Stable
     private static JavaNetHttpCookieAccess javaNetHttpCookieAccess;
+    @Stable
     private static JavaNetUriAccess javaNetUriAccess;
+    @Stable
     private static JavaNetURLAccess javaNetURLAccess;
+    @Stable
     private static JavaNioAccess javaNioAccess;
+    @Stable
     private static JavaUtilCollectionAccess javaUtilCollectionAccess;
+    @Stable
     private static JavaUtilConcurrentTLRAccess javaUtilConcurrentTLRAccess;
+    @Stable
     private static JavaUtilConcurrentFJPAccess javaUtilConcurrentFJPAccess;
+    @Stable
     private static JavaUtilJarAccess javaUtilJarAccess;
+    @Stable
     private static JavaUtilZipFileAccess javaUtilZipFileAccess;
+    @Stable
     private static JavaUtilResourceBundleAccess javaUtilResourceBundleAccess;
+    @Stable
     private static JavaSecurityAccess javaSecurityAccess;
+    @Stable
     private static JavaSecurityPropertiesAccess javaSecurityPropertiesAccess;
+    @Stable
     private static JavaSecuritySignatureAccess javaSecuritySignatureAccess;
+    @Stable
     private static JavaSecuritySpecAccess javaSecuritySpecAccess;
+    @Stable
     private static JavaxCryptoSealedObjectAccess javaxCryptoSealedObjectAccess;
+    @Stable
     private static JavaxCryptoSpecAccess javaxCryptoSpecAccess;
+    @Stable
     private static JavaxSecurityAccess javaxSecurityAccess;
+    @Stable
     private static JavaTemplateAccess javaTemplateAccess;
 
+    private static void checkNotAssigned(Object currentValue) {
+        if (currentValue != null) {
+            throw new IllegalStateException("Already assigned");
+        }
+    }
+
     public static void setJavaUtilCollectionAccess(JavaUtilCollectionAccess juca) {
+        checkNotAssigned(javaUtilCollectionAccess);
         javaUtilCollectionAccess = juca;
     }
 
@@ -109,6 +154,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaUtilConcurrentTLRAccess(JavaUtilConcurrentTLRAccess access) {
+        checkNotAssigned(javaUtilConcurrentTLRAccess);
         javaUtilConcurrentTLRAccess = access;
     }
 
@@ -124,6 +170,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaUtilConcurrentFJPAccess(JavaUtilConcurrentFJPAccess access) {
+        checkNotAssigned(javaUtilConcurrentFJPAccess);
         javaUtilConcurrentFJPAccess = access;
     }
 
@@ -148,10 +195,12 @@ public class SharedSecrets {
     }
 
     public static void setJavaUtilJarAccess(JavaUtilJarAccess access) {
+        checkNotAssigned(javaUtilJarAccess);
         javaUtilJarAccess = access;
     }
 
     public static void setJavaLangAccess(JavaLangAccess jla) {
+        checkNotAssigned(javaLangAccess);
         javaLangAccess = jla;
     }
 
@@ -160,6 +209,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaLangInvokeAccess(JavaLangInvokeAccess jlia) {
+        checkNotAssigned(javaLangInvokeAccess);
         javaLangInvokeAccess = jlia;
     }
 
@@ -175,6 +225,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaLangModuleAccess(JavaLangModuleAccess jlrma) {
+        checkNotAssigned(javaLangModuleAccess);
         javaLangModuleAccess = jlrma;
     }
 
@@ -188,6 +239,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaLangRefAccess(JavaLangRefAccess jlra) {
+        checkNotAssigned(javaLangRefAccess);
         javaLangRefAccess = jlra;
     }
 
@@ -196,6 +248,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaLangReflectAccess(JavaLangReflectAccess jlra) {
+        checkNotAssigned(javaLangReflectAccess);
         javaLangReflectAccess = jlra;
     }
 
@@ -204,6 +257,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaNetUriAccess(JavaNetUriAccess jnua) {
+        checkNotAssigned(javaNetUriAccess);
         javaNetUriAccess = jnua;
     }
 
@@ -217,6 +271,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaNetURLAccess(JavaNetURLAccess jnua) {
+        checkNotAssigned(javaNetURLAccess);
         javaNetURLAccess = jnua;
     }
 
@@ -230,6 +285,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaNetInetAddressAccess(JavaNetInetAddressAccess jna) {
+        checkNotAssigned(javaNetInetAddressAccess);
         javaNetInetAddressAccess = jna;
     }
 
@@ -243,6 +299,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaNetHttpCookieAccess(JavaNetHttpCookieAccess a) {
+        checkNotAssigned(javaNetHttpCookieAccess);
         javaNetHttpCookieAccess = a;
     }
 
@@ -256,6 +313,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaNioAccess(JavaNioAccess jna) {
+        checkNotAssigned(javaNioAccess);
         javaNioAccess = jna;
     }
 
@@ -271,6 +329,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaIOAccess(JavaIOAccess jia) {
+        checkNotAssigned(javaIOAccess);
         javaIOAccess = jia;
     }
 
@@ -284,6 +343,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaIOCPrintWriterAccess(JavaIOPrintWriterAccess a) {
+        checkNotAssigned(javaIOPrintWriterAccess);
         javaIOPrintWriterAccess = a;
     }
 
@@ -297,6 +357,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaIOCPrintStreamAccess(JavaIOPrintStreamAccess a) {
+        checkNotAssigned(javaIOPrintStreamAccess);
         javaIOPrintStreamAccess = a;
     }
 
@@ -310,6 +371,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaIOFileDescriptorAccess(JavaIOFileDescriptorAccess jiofda) {
+        checkNotAssigned(javaIOFileDescriptorAccess);
         javaIOFileDescriptorAccess = jiofda;
     }
 
@@ -323,6 +385,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaIOFilePermissionAccess(JavaIOFilePermissionAccess jiofpa) {
+        checkNotAssigned(javaIOFilePermissionAccess);
         javaIOFilePermissionAccess = jiofpa;
     }
 
@@ -336,6 +399,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaSecurityAccess(JavaSecurityAccess jsa) {
+        checkNotAssigned(javaSecurityAccess);
         javaSecurityAccess = jsa;
     }
 
@@ -349,6 +413,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaSecurityPropertiesAccess(JavaSecurityPropertiesAccess jspa) {
+        checkNotAssigned(javaSecurityPropertiesAccess);
         javaSecurityPropertiesAccess = jspa;
     }
 
@@ -371,10 +436,12 @@ public class SharedSecrets {
     }
 
     public static void setJavaUtilZipFileAccess(JavaUtilZipFileAccess access) {
+        checkNotAssigned(javaUtilZipFileAccess);
         javaUtilZipFileAccess = access;
     }
 
     public static void setJavaAWTAccess(JavaAWTAccess jaa) {
+        checkNotAssigned(javaAWTAccess);
         javaAWTAccess = jaa;
     }
 
@@ -385,6 +452,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaAWTFontAccess(JavaAWTFontAccess jafa) {
+        checkNotAssigned(javaAWTFontAccess);
         javaAWTFontAccess = jafa;
     }
 
@@ -399,6 +467,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaBeansAccess(JavaBeansAccess access) {
+        checkNotAssigned(javaBeansAccess);
         javaBeansAccess = access;
     }
 
@@ -412,6 +481,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaUtilResourceBundleAccess(JavaUtilResourceBundleAccess access) {
+        checkNotAssigned(javaUtilResourceBundleAccess);
         javaUtilResourceBundleAccess = access;
     }
 
@@ -425,6 +495,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaObjectInputStreamReadString(JavaObjectInputStreamReadString access) {
+        checkNotAssigned(javaObjectInputStreamReadString);
         javaObjectInputStreamReadString = access;
     }
 
@@ -438,6 +509,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaObjectInputStreamAccess(JavaObjectInputStreamAccess access) {
+        checkNotAssigned(javaObjectInputStreamAccess);
         javaObjectInputStreamAccess = access;
     }
 
@@ -451,10 +523,12 @@ public class SharedSecrets {
     }
 
     public static void setJavaObjectInputFilterAccess(JavaObjectInputFilterAccess access) {
+        checkNotAssigned(javaObjectInputFilterAccess);
         javaObjectInputFilterAccess = access;
     }
 
     public static void setJavaIORandomAccessFileAccess(JavaIORandomAccessFileAccess jirafa) {
+        checkNotAssigned(javaIORandomAccessFileAccess);
         javaIORandomAccessFileAccess = jirafa;
     }
 
@@ -468,6 +542,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaSecuritySignatureAccess(JavaSecuritySignatureAccess jssa) {
+        checkNotAssigned(javaSecuritySignatureAccess);
         javaSecuritySignatureAccess = jssa;
     }
 
@@ -481,6 +556,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaSecuritySpecAccess(JavaSecuritySpecAccess jssa) {
+        checkNotAssigned(javaSecuritySpecAccess);
         javaSecuritySpecAccess = jssa;
     }
 
@@ -494,6 +570,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaxCryptoSpecAccess(JavaxCryptoSpecAccess jcsa) {
+        checkNotAssigned(javaxCryptoSpecAccess);
         javaxCryptoSpecAccess = jcsa;
     }
 
@@ -507,6 +584,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaxCryptoSealedObjectAccess(JavaxCryptoSealedObjectAccess jcsoa) {
+        checkNotAssigned(javaxCryptoSealedObjectAccess);
         javaxCryptoSealedObjectAccess = jcsoa;
     }
 
@@ -520,6 +598,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaxSecurityAccess(JavaxSecurityAccess jsa) {
+        checkNotAssigned(javaxSecurityAccess);
         javaxSecurityAccess = jsa;
     }
 
@@ -533,6 +612,7 @@ public class SharedSecrets {
     }
 
     public static void setJavaTemplateAccess(JavaTemplateAccess jta) {
+        checkNotAssigned(javaTemplateAccess);
         javaTemplateAccess = jta;
     }
 
