@@ -92,6 +92,7 @@ class CustomScheduler {
      * The scheduler should be inherited.
      */
     @Test
+    @Disabled("Scheduler inheritance is currently disabled")
     void testCustomScheduler3() throws Exception {
         var ref = new AtomicReference<Executor>();
         ThreadFactory factory = VThreadScheduler.virtualThreadFactory(scheduler1);
