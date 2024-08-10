@@ -1069,7 +1069,7 @@ public class Thread implements Runnable {
 
             /**
              * Sets the scheduler.
-             * @param scheduler
+             * @param scheduler scheduler
              * @return this builder
              */
             OfVirtual scheduler(Executor scheduler);
@@ -1515,7 +1515,8 @@ public class Thread implements Runnable {
     }
 
     /**
-     * Keeps the current thread pinned until {@linkplain #close() closed}. Returned by {@link #pinCarrierThread()}.
+     * Keeps the current thread pinned to its carrier thread until {@linkplain #close() closed}. Returned by
+     * {@link #pinToCarrierThread()}.
      */
     public static final class CarrierThreadPin implements AutoCloseable {
         /**
@@ -1548,9 +1549,12 @@ public class Thread implements Runnable {
 
     /**
      * Disallow the current thread be suspended or preempted until the returned pin is
-     * {@linkplain CarrierThreadPin#close() closed}.
+     * {@linkplain CarrierThreadPin#close() closed}. This operation has no effect on platform threads, and the returned
+     * pin may skip correctness checks in these cases.
+     *
+     * @return a new pin that must be closed to unpin the thread
      */
-    public static CarrierThreadPin pinCarrierThread() {
+    public static CarrierThreadPin pinToCarrierThread() {
 		if (!(Thread.currentThread() instanceof VirtualThread thread)) {
             return new CarrierThreadPin(null);
 		}
