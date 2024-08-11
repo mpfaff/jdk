@@ -84,7 +84,11 @@ public final class DirectMethodBuilder
     @Override
     public MethodTypeDesc methodTypeSymbol() {
         if (mDesc == null) {
-            mDesc = original.methodTypeSymbol();
+            if (original != null) {
+                mDesc = original.methodTypeSymbol();
+            } else {
+                mDesc = MethodTypeDesc.ofDescriptor(methodType().stringValue());
+            }
         }
         return mDesc;
     }

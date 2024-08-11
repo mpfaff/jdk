@@ -28,7 +28,6 @@ package jdk.internal.classfile.impl;
 import jdk.internal.vm.annotation.Stable;
 
 import java.lang.constant.ClassDesc;
-import java.lang.constant.MethodTypeDesc;
 import java.util.function.Consumer;
 
 import java.lang.classfile.CustomAttribute;
@@ -70,7 +69,11 @@ public final class DirectFieldBuilder
     @Override
     public ClassDesc fieldTypeSymbol() {
         if (fDesc == null) {
-            fDesc = original.fieldTypeSymbol();
+            if (original != null) {
+                fDesc = original.fieldTypeSymbol();
+            } else {
+                fDesc = ClassDesc.ofDescriptor(fieldType().stringValue());
+            }
         }
         return fDesc;
     }
