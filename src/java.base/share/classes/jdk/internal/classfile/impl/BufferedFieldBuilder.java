@@ -24,6 +24,9 @@
  */
 package jdk.internal.classfile.impl;
 
+import jdk.internal.vm.annotation.Stable;
+
+import java.lang.constant.ClassDesc;
 import java.lang.reflect.AccessFlag;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,8 @@ public final class BufferedFieldBuilder
     private final Utf8Entry desc;
     private final List<FieldElement> elements = new ArrayList<>();
     private AccessFlags flags;
+    @Stable
+    private ClassDesc fDesc;
 
     public BufferedFieldBuilder(SplitConstantPool constantPool,
                                 ClassFileImpl context,
@@ -52,6 +57,24 @@ public final class BufferedFieldBuilder
         this.name = name;
         this.desc = type;
         this.flags = new AccessFlagsImpl(AccessFlag.Location.FIELD);
+    }
+
+    @Override
+    public Utf8Entry fieldName() {
+        return name;
+    }
+
+    @Override
+    public Utf8Entry fieldType() {
+        return desc;
+    }
+
+    @Override
+    public ClassDesc fieldTypeSymbol() {
+        if (fDesc == null) {
+            fDesc = ClassDesc.ofDescriptor(desc.stringValue());
+        }
+        return fDesc;
     }
 
     @Override
