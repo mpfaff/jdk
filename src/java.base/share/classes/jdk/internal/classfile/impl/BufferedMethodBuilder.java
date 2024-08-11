@@ -46,6 +46,7 @@ import java.lang.classfile.MethodModel;
 import java.lang.classfile.constantpool.Utf8Entry;
 
 public final class BufferedMethodBuilder
+        extends AbstractBuilder<MethodModel>
         implements TerminalMethodBuilder {
     private final List<MethodElement> elements;
     private final SplitConstantPool constantPool;
@@ -53,7 +54,6 @@ public final class BufferedMethodBuilder
     private final Utf8Entry name;
     private final Utf8Entry desc;
     private AccessFlags flags;
-    private final MethodModel original;
     private int[] parameterSlots;
     @Stable
     MethodTypeDesc mDesc;
@@ -64,13 +64,13 @@ public final class BufferedMethodBuilder
                                  Utf8Entry typeInfo,
                                  int flags,
                                  MethodModel original) {
+        super(original);
         this.elements = new ArrayList<>();
         this.constantPool = constantPool;
         this.context = context;
         this.name = nameInfo;
         this.desc = typeInfo;
         this.flags = new AccessFlagsImpl(AccessFlag.Location.METHOD, flags);
-        this.original = original;
     }
 
     @Override
@@ -106,7 +106,11 @@ public final class BufferedMethodBuilder
     @Override
     public MethodTypeDesc methodTypeSymbol() {
         if (mDesc == null) {
-            mDesc = original.methodTypeSymbol();
+            if (original != null) {
+                mDesc = original.methodTypeSymbol();
+            } else {
+                mDesc = MethodTypeDesc.ofDescriptor(methodType().stringValue());
+            }
         }
         return mDesc;
     }

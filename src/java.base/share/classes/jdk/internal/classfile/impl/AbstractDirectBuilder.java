@@ -27,16 +27,15 @@ package jdk.internal.classfile.impl;
 import java.lang.classfile.Attribute;
 import java.lang.classfile.constantpool.ConstantPool;
 
-public class AbstractDirectBuilder<M> {
+public abstract class AbstractDirectBuilder<M> extends AbstractBuilder<M> {
     protected final SplitConstantPool constantPool;
     protected final ClassFileImpl context;
     protected final AttributeHolder attributes = new AttributeHolder();
-    protected final M original;
 
-    public AbstractDirectBuilder(SplitConstantPool constantPool, ClassFileImpl context, M original) {
+    protected AbstractDirectBuilder(SplitConstantPool constantPool, ClassFileImpl context, M original) {
+        super(original);
         this.constantPool = constantPool;
         this.context = context;
-        this.original = original;
     }
 
     public SplitConstantPool constantPool() {
