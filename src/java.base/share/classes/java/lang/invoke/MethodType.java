@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
+import jdk.internal.access.SharedSecrets;
 import jdk.internal.util.ReferencedKeySet;
 import jdk.internal.util.ReferenceKey;
 import jdk.internal.vm.annotation.Stable;
@@ -852,7 +853,7 @@ class MethodType
      * @return the parameter types (as an immutable list)
      */
     public List<Class<?>> parameterList() {
-        return List.of(ptypes);
+        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(ptypes);
     }
 
     /**

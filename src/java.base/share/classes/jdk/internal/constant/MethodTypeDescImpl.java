@@ -24,6 +24,7 @@
  */
 package jdk.internal.constant;
 
+import jdk.internal.access.SharedSecrets;
 import jdk.internal.vm.annotation.Stable;
 
 import java.lang.constant.ClassDesc;
@@ -135,7 +136,7 @@ public final class MethodTypeDescImpl implements MethodTypeDesc {
 
     @Override
     public List<ClassDesc> parameterList() {
-        return List.of(argTypes);
+        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(argTypes);
     }
 
     @Override
