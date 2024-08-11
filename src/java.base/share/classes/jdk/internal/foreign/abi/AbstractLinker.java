@@ -126,7 +126,7 @@ public abstract sealed class AbstractLinker implements Linker permits LinuxAArch
 
         MethodType type = function.toMethodType();
         if (!type.equals(target.type())) {
-            throw new IllegalArgumentException("Wrong method handle type: " + target.type());
+            throw new IllegalArgumentException("Method handle type is " + target.type() + " but " + type + " was expected");
         }
 
         UpcallStubFactory factory = UPCALL_CACHE.get(new LinkRequest(function, optionSet), linkRequest ->
