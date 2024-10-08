@@ -78,10 +78,7 @@ public final class MethodImpl
 
     @Override
     public MethodTypeDesc methodTypeSymbol() {
-        if (mDesc == null) {
-            mDesc = MethodTypeDesc.ofDescriptor(methodType().stringValue());
-        }
-        return mDesc;
+        return Util.methodTypeSymbol(methodType());
     }
 
     @Override
@@ -139,13 +136,7 @@ public final class MethodImpl
             builder.withMethod(this);
         }
         else {
-            builder.withMethod(methodName(), methodType(), methodFlags(),
-                               new Consumer<>() {
-                @Override
-                public void accept(MethodBuilder mb) {
-                    MethodImpl.this.forEach(mb);
-                }
-            });
+            builder.withMethod(methodName(), methodType(), methodFlags(), Util.writingAll(this));
         }
     }
 
