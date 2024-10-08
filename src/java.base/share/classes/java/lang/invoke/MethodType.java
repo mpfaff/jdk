@@ -853,7 +853,7 @@ class MethodType
      * @return the parameter types (as an immutable list)
      */
     public List<Class<?>> parameterList() {
-        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(ptypes);
+        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(Arrays.copyOf(ptypes, ptypes.length, Object[].class));
     }
 
     /**

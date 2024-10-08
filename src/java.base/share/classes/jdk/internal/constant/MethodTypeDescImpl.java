@@ -225,7 +225,7 @@ public final class MethodTypeDescImpl implements MethodTypeDesc {
 
     @Override
     public List<ClassDesc> parameterList() {
-        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(argTypes);
+        return SharedSecrets.getJavaUtilCollectionAccess().listFromTrustedArray(Arrays.copyOf(argTypes, argTypes.length, Object[].class));
     }
 
     @Override
