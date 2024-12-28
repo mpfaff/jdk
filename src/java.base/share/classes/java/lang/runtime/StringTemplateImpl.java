@@ -94,6 +94,7 @@ final class StringTemplateImpl extends Carriers.CarrierObject implements StringT
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Object> values() {
         try {
             return (List<Object>)valuesMH.invokeExact(this);

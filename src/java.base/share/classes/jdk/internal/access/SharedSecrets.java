@@ -41,10 +41,7 @@ import java.io.Console;
 import java.io.FileDescriptor;
 import java.io.FilePermission;
 import java.io.ObjectInputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.security.ProtectionDomain;
 import java.security.Signature;
 import javax.security.auth.x500.X500Principal;
 
@@ -83,10 +80,6 @@ public class SharedSecrets {
     @Stable
     private static JavaIOAccess javaIOAccess;
     @Stable
-    private static JavaIOPrintStreamAccess javaIOPrintStreamAccess;
-    @Stable
-    private static JavaIOPrintWriterAccess javaIOPrintWriterAccess;
-    @Stable
     private static JavaIOFileDescriptorAccess javaIOFileDescriptorAccess;
     @Stable
     private static JavaIOFilePermissionAccess javaIOFilePermissionAccess;
@@ -98,6 +91,8 @@ public class SharedSecrets {
     private static JavaObjectInputStreamAccess javaObjectInputStreamAccess;
     @Stable
     private static JavaObjectInputFilterAccess javaObjectInputFilterAccess;
+    @Stable
+    private static JavaObjectStreamReflectionAccess javaObjectStreamReflectionAccess;
     @Stable
     private static JavaNetInetAddressAccess javaNetInetAddressAccess;
     @Stable
@@ -120,8 +115,6 @@ public class SharedSecrets {
     private static JavaUtilZipFileAccess javaUtilZipFileAccess;
     @Stable
     private static JavaUtilResourceBundleAccess javaUtilResourceBundleAccess;
-    @Stable
-    private static JavaSecurityAccess javaSecurityAccess;
     @Stable
     private static JavaSecurityPropertiesAccess javaSecurityPropertiesAccess;
     @Stable
@@ -348,34 +341,6 @@ public class SharedSecrets {
         return access;
     }
 
-    public static void setJavaIOCPrintWriterAccess(JavaIOPrintWriterAccess a) {
-        checkNotAssigned(javaIOPrintWriterAccess);
-        javaIOPrintWriterAccess = a;
-    }
-
-    public static JavaIOPrintWriterAccess getJavaIOPrintWriterAccess() {
-        var access = javaIOPrintWriterAccess;
-        if (access == null) {
-            ensureClassInitialized(PrintWriter.class);
-            access = javaIOPrintWriterAccess;
-        }
-        return access;
-    }
-
-    public static void setJavaIOCPrintStreamAccess(JavaIOPrintStreamAccess a) {
-        checkNotAssigned(javaIOPrintStreamAccess);
-        javaIOPrintStreamAccess = a;
-    }
-
-    public static JavaIOPrintStreamAccess getJavaIOPrintStreamAccess() {
-        var access = javaIOPrintStreamAccess;
-        if (access == null) {
-            ensureClassInitialized(PrintStream.class);
-            access = javaIOPrintStreamAccess;
-        }
-        return access;
-    }
-
     public static void setJavaIOFileDescriptorAccess(JavaIOFileDescriptorAccess jiofda) {
         checkNotAssigned(javaIOFileDescriptorAccess);
         javaIOFileDescriptorAccess = jiofda;
@@ -400,20 +365,6 @@ public class SharedSecrets {
         if (access == null) {
             ensureClassInitialized(FileDescriptor.class);
             access = javaIOFileDescriptorAccess;
-        }
-        return access;
-    }
-
-    public static void setJavaSecurityAccess(JavaSecurityAccess jsa) {
-        checkNotAssigned(javaSecurityAccess);
-        javaSecurityAccess = jsa;
-    }
-
-    public static JavaSecurityAccess getJavaSecurityAccess() {
-        var access = javaSecurityAccess;
-        if (access == null) {
-            ensureClassInitialized(ProtectionDomain.class);
-            access = javaSecurityAccess;
         }
         return access;
     }
@@ -531,6 +482,21 @@ public class SharedSecrets {
     public static void setJavaObjectInputFilterAccess(JavaObjectInputFilterAccess access) {
         checkNotAssigned(javaObjectInputFilterAccess);
         javaObjectInputFilterAccess = access;
+    }
+
+    public static JavaObjectStreamReflectionAccess getJavaObjectStreamReflectionAccess() {
+        var access = javaObjectStreamReflectionAccess;
+        if (access == null) {
+            try {
+                Class.forName("java.io.ObjectStreamReflection$Access", true, null);
+                access = javaObjectStreamReflectionAccess;
+            } catch (ClassNotFoundException e) {}
+        }
+        return access;
+    }
+
+    public static void setJavaObjectStreamReflectionAccess(JavaObjectStreamReflectionAccess access) {
+        javaObjectStreamReflectionAccess = access;
     }
 
     public static void setJavaIORandomAccessFileAccess(JavaIORandomAccessFileAccess jirafa) {

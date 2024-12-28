@@ -26,10 +26,9 @@ package jdk.internal.classfile.impl;
 
 import jdk.internal.vm.annotation.Stable;
 
-import java.lang.constant.MethodTypeDesc;
 import java.lang.classfile.*;
 import java.lang.classfile.constantpool.Utf8Entry;
-
+import java.lang.constant.MethodTypeDesc;
 import java.lang.reflect.AccessFlag;
 import java.util.List;
 import java.util.Optional;
@@ -107,9 +106,9 @@ public final class MethodImpl
             reader.copyBytesTo(buf, startPos, endPos - startPos);
         }
         else {
-            buf.writeU2(flags().flagsMask());
-            buf.writeIndex(methodName());
-            buf.writeIndex(methodType());
+            buf.writeU2U2U2(flags().flagsMask(),
+                    buf.cpIndex(methodName()),
+                    buf.cpIndex(methodType()));
             Util.writeAttributes(buf, attributes());
         }
     }

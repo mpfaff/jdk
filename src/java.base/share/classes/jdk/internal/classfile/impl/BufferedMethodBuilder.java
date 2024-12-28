@@ -26,6 +26,9 @@ package jdk.internal.classfile.impl;
 
 import jdk.internal.vm.annotation.Stable;
 
+import java.lang.classfile.*;
+import java.lang.classfile.constantpool.ConstantPoolBuilder;
+import java.lang.classfile.constantpool.Utf8Entry;
 import java.lang.constant.MethodTypeDesc;
 import java.lang.reflect.AccessFlag;
 import java.util.ArrayList;
@@ -33,17 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import java.lang.classfile.AccessFlags;
-
-import java.lang.classfile.ClassModel;
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.CodeModel;
-import java.lang.classfile.CodeTransform;
-import java.lang.classfile.constantpool.ConstantPoolBuilder;
-import java.lang.classfile.MethodBuilder;
-import java.lang.classfile.MethodElement;
-import java.lang.classfile.MethodModel;
-import java.lang.classfile.constantpool.Utf8Entry;
+import static java.util.Objects.requireNonNull;
 
 public final class BufferedMethodBuilder
         extends AbstractBuilder<MethodModel>
@@ -68,14 +61,14 @@ public final class BufferedMethodBuilder
         this.elements = new ArrayList<>();
         this.constantPool = constantPool;
         this.context = context;
-        this.name = nameInfo;
-        this.desc = typeInfo;
+        this.name = requireNonNull(nameInfo);
+        this.desc = requireNonNull(typeInfo);
         this.flags = new AccessFlagsImpl(AccessFlag.Location.METHOD, flags);
     }
 
     @Override
     public MethodBuilder with(MethodElement element) {
-        elements.add(element);
+        elements.add(requireNonNull(element));
         if (element instanceof AccessFlags f) this.flags = checkFlags(f);
         return this;
     }
