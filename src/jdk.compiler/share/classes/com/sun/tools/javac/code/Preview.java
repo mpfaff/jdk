@@ -152,7 +152,7 @@ public class Preview {
                 .filter(ed -> ed.packge.fullname == names.jdk_internal_javac)
                 .anyMatch(ed -> ed.modules.contains(m)) ||
                //the specification lists the java.se module as participating in preview:
-               m.name == names.java_se;
+               (m != null && m.name == names.java_se);
     }
 
     /**
