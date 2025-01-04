@@ -1397,15 +1397,15 @@ public class Thread implements Runnable {
         private final VirtualThread owner;
         private boolean closed;
 
-		private CarrierThreadPin(VirtualThread owner) {
-			this.owner = owner;
-		}
+        private CarrierThreadPin(VirtualThread owner) {
+            this.owner = owner;
+        }
 
         /**
          * @throws IllegalStateException if the current thread is not the pinned thread, or the thread has already been
          *                               unpinned.
          */
-		@Override
+        @Override
         public void close() {
             // In this case, we can just return on close because the thread is a platform thread and pinning has no
             // effect.
@@ -1420,19 +1420,27 @@ public class Thread implements Runnable {
     }
 
     /**
-     * Disallow the current thread be suspended or preempted until the returned pin is
+     * Disallow the current thread to be suspended or preempted until the returned pin is
      * {@linkplain CarrierThreadPin#close() closed}. This operation has no effect on platform threads, and the returned
      * pin may skip correctness checks in these cases.
      *
      * @return a new pin that must be closed to unpin the thread
      */
     public static CarrierThreadPin pinToCarrierThread() {
-		if (!(Thread.currentThread() instanceof VirtualThread thread)) {
+        if (!(Thread.currentThread() instanceof VirtualThread thread)) {
             return new CarrierThreadPin(null);
-		}
+        }
         thread.disableSuspendAndPreempt();
-		return new CarrierThreadPin(thread);
-	}
+        return new CarrierThreadPin(thread);
+    }
+
+    /** {@return whether the current thread is a virtual thread that is pinned to its carrier thread} */
+    public static boolean isPinned() {
+        if (!(Thread.currentThread() instanceof VirtualThread thread)) {
+            return false;
+        }
+        return Continuation.isPinned(VirtualThread.continuationScope());
+    }
 
     /**
      * Returns {@code true} if this thread is a virtual thread. A virtual thread
