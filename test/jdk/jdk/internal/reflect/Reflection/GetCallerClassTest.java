@@ -111,16 +111,7 @@ public class GetCallerClassTest {
     @CallerSensitive
     private void testNonSystemMethod() {
         System.out.println("\ntestNonSystemMethod...");
-        try {
-            Class<?> c = Reflection.getCallerClass();
-            throw new RuntimeException("shouldn't have succeeded");
-        } catch (InternalError e) {
-            if (e.getMessage().startsWith("CallerSensitive annotation expected")) {
-                System.out.println("Expected error: " + e.getMessage());
-            } else {
-                throw e;
-            }
-        }
+        Class<?> c = Reflection.getCallerClass();
     }
 
     private void testCallerSensitiveMethods() {
