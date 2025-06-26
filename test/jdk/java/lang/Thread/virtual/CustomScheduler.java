@@ -42,6 +42,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import jdk.test.lib.thread.VThreadScheduler;
 import jdk.test.lib.thread.VThreadRunner;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
